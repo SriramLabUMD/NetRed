@@ -31,63 +31,8 @@ function [ReducedModel] = NetRed(S,fluxes,mets,protectedMets,options)
 %          'verbose' - Flag (1 or 0) to print algorithmic details while
 %                   reducing the network (default 1)
 %          'BM' - Flag (1 or 0) to resolve degenerate biomass equations
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This program is intended for use in reducing the result of a Flux Balance
-% Analysis (FBA) simulation. The user inputs are the stoichiometric matrix
-% of the FBA model, the vector of fluxes, a list of metabolite names, and a
-% list of protected metabolites. Please refer to the associated publication
-% for the mathematical formulation of this network reduction process.
-% Created By: Daniel J. Lugar (dlugar@umd.edu)
-% Date of Creation: 10/8/2018
-% Last Modified: 10/31/2018 (DJL)
-% Version 6
-% Modified by Sean Mack 11/12/2018
-% - Converted into funciton to fit into existing workflow
-% - Added dependent flag as optional input
-% Modified by Sean Mack 11/28/2018
-% - Modified genvec4 to improve computational efficiency (see function for
-% details)
-% Modified by Sean Mack 11/29/2018
-% - Added flux threshold as input
-% - Added code to set default values for dependent flag and threshold (if
-% not provided by user)
-% Version 7
-% Modified by Sean Mack 12/13/2019
-% - Added options structure as input
-% - Made writing results to Excel optional
-% Modified by Sean Mack 12/18/2019
-% - Changed code to only remove zero fluxes rather than those below an
-% arbitrary threshold (the latter led to unbalanced reduced models)
-% Version 8
-% Modified by Sean Mack 12/21/2019
-% - Optimized code with sparse matrices and logical indexing where
-% possible (see notes marked -SM)
-% - Added capability to handle flux matrices
-% - Added algorithm for generating combined reduced model that encompasses
-% all given fluxes
-% - Added capability to eliminate degenerate biomass equations
-% Version 9
-% Modified by Sean Mack 2/19/2020
-% - Added hadling of varying non-zero fluxes within set of fluxes
-% - Updated and improved combineparallel function -- now properly reports
-% reaction pairs
-% - Improved algorithm for collapsing degenerate biomass equations
-% - Removed unused functions (unionize and sortSrows)
-% - Added loop to minimize number of mustRemain mets
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Please provide the following inputs:
-% S - the stoichiometric matrix (full or sparse)
-% fluxes - column vector or array of associated flux values
-% mets - a cell array of metabolite names in the order in which they appear
-%          in the rows of S.
-% protectedMets - a cell array of the names of the metabolites desired to
-%                 remain in the reduced metabolic network.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set default variables
 threshold = 10^-8;
 lumpIdenticalRxns = 0;
@@ -533,8 +478,7 @@ PermMat = sparse([upperPermMat;lowerPermMat]);
 end
 
 function [T2,mustRemain] = genvec5(S,umets,mets,verbose)
-% Determines generating vector basis for the nullspace of a matrix
-%   Finds the generating vectors of the pointed convex polyhedral cone
+% Determines generating vector basis for the nullspace of a matrix (vectors of the pointed convex polyhedral cone)
 
 zMets = ~any(S,2);
 S = S(~zMets,:);
