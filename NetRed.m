@@ -362,7 +362,6 @@ R = An'*An;
 R = triu(R);
 R = R - eye(size(R,1),size(R,2));
 [r,c] = find(R <= -0.99999999);
-
 end
 
 function [r,c] = parallel(A)
@@ -417,6 +416,7 @@ for i = 1:size(revPair,1)
         vp(a(1),:) = 0;
     end
 end
+
 rMat = speye(size(rMap));
 tf = ~any(rMap,2);
 rMat(tf,:) = [];
@@ -452,7 +452,6 @@ StargetRxns = S(:,targetRxns);
 SunchangedRxns = S(:,unchangedRxns);
 
 StargetRxnsUmets = S(umets,targetRxns);
-
 end
 
 function [PermMat,score] = findscore1num(S)
@@ -484,7 +483,6 @@ upperPermMat = sortrows(upperPermMat);
 upperPermMat(:,1) = [];
 
 PermMat = sparse([upperPermMat;lowerPermMat]);
-
 end
 
 function [T2,mustRemain] = genvec5(S,umets,mets,verbose)
