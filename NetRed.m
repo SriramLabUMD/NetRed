@@ -350,6 +350,8 @@ end
 function [r,c] = antiparallel(A)
 % ANTIPARALLEL Determines the location of antiparallel vectors in the column space
 % of a matrix
+% Output [r,c] is the column indices of the two antiparallel column vectors in the input matrix "A'
+
 An = zeros(size(A));
 for i = 1:size(A,2)
     if sum(A(:,i).^2) ~= 0
@@ -362,9 +364,11 @@ R = R - eye(size(R,1),size(R,2));
 [r,c] = find(R <= -0.99999999);
 
 end
+
 function [r,c] = parallel(A)
 % PARALLEL Determines the location of parallel vectors in the column space
 % of a matrix
+% Output [r,c] is the column indices of the two antiparallel column vectors in the input matrix "A"
 An = zeros(size(A));
 for i = 1:size(A,2)
     if sum(A(:,i).^2) ~= 0
@@ -375,8 +379,8 @@ R = An'*An;
 R = triu(R);
 R = R - eye(size(R,1),size(R,2));
 [r,c] = find(R >= 0.99999999);
-
 end
+
 function [Sp,vp,rMap,rMat] = combineparallel(S,v)
 % Combines identical and reverse reactions in the stoichiometric matrix
 % Inputs are S (the stoichiometric matrix) and v (the vector of fluxes)
@@ -424,12 +428,18 @@ end
 function [targetRxns,unchangedRxns,StargetRxns,SunchangedRxns,StargetRxnsUmets,colMap] = submatricesS(S,umets)
 % SUBMATRICESS Finds submatrices of S
 % Inputs are S and umets
+% Outputs:
+% targetRxns - the reactions involving unprotected metabolites.
+% unchangedRxns - those reactions which remain the same in the original
+%       and reduced S matrices. They do not involve unprotected metabolites.
+% StargetRxns - the submatrix of S containing only columns which involve
+%       unprotected metabolites. SunchangedRxns is the submatrix of S containing
+%       only columns which do not involve unprotected metabolites.
+% StargetRxnsUmets - the submatrix of StargetRxns containing only the rows
+%       of StargetRxns involving unprotected metabolites.
 
-% targetRxns are the reactions involving unprotected metabolites.
 targetRxns = any(S(umets,:) ~= 0); %streamlined generation and switched to logical indexing -SM
 
-% unchangedRxns are those reactions which remain the same in the original
-% and reduced S matrices. They do not involve unprotected metabolites.
 unchangedRxns = 1:size(S,2);
 unchangedRxns(targetRxns) = [];
 
@@ -438,21 +448,21 @@ unchangedRxns(targetRxns) = [];
 colMap = speye(size(S,2),size(S,2));
 colMap = [colMap(:,unchangedRxns),colMap(:,targetRxns)];
 
-% StargetRxns is the submatrix of S containing only columns which involve
-% unprotected metabolites. SunchangedRxns is the submatrix of S containing
-% only columns which do not involve unprotected metabolites.
 StargetRxns = S(:,targetRxns);
 SunchangedRxns = S(:,unchangedRxns);
 
-% StargetRxnsUmets is the submatrix of StargetRxns containing only the rows
-% of StargetRxns involving unprotected metabolites.
 StargetRxnsUmets = S(umets,targetRxns);
+
 end
 
 function [PermMat,score] = findscore1num(S)
 % FINDSCORE finds the "score" of each unprotected metabolite
 %   A score greater than or equal to 0 is needed for a metabolite to be a
 %   candidate for removal from the network.
+% PermMat - a matrix that permutes the rows of "S" by left multiplication, placing rows
+%       in order of decreasing score.
+% score - a vector containing the scores of each metabolite in the order of their
+%       corresponding rows in "S".
 
 S = full(S);
 Mall = sum(S' < 0);
@@ -479,6 +489,14 @@ end
 
 function [T2,mustRemain] = genvec5(S,umets,mets,verbose)
 % Determines generating vector basis for the nullspace of a matrix (vectors of the pointed convex polyhedral cone)
+% S - stoichiometric matrix of the metabolic network
+% umets - indices of unprotected metabolites that the user wishes to eliminate from the metabolic network
+% mets - full vector of metabolite indices
+% verbose - flag to display progress on intermediate operations of this subroutine
+% T2 - The transformation matrix "T" which removes unprotected metabolites from the network described by "S".
+%        This transformation matrix is developed to remove the unprotected metabolites "umets", except those
+%        designated as "mustRemain"
+% mustRemain - indices of umets that were not able to be removed from the network
 
 zMets = ~any(S,2);
 S = S(~zMets,:);
