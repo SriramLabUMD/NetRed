@@ -10,11 +10,7 @@ Lugar, D., Mack, S., & Sriram, G. (2020). NetRed, an algorithm to reduce genome-
 
 ## Instructions
 
-This program is intended for use in reducing the results of Flux Balance Analysis (FBA) simulations. For details of the algorithm, please refer to the associated publication:
-
-Lugar, D., Mack, S., & Sriram, G. (2020). NetRed, an algorithm to reduce genome-scale metabolic networks and facilitate the analysis of flux predictions. *Metabolic Engineering*, doi: 10.1016/j.ymben.2020.11.003
-
-*If used, please cite the publication above*
+This program is intended for use in reducing the results of Flux Balance Analysis (FBA) simulations. For details of the algorithm, please refer to the associated publication.
 
 ### Inputs 
 
