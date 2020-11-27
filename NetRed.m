@@ -4,9 +4,12 @@ function [ReducedModel] = NetRed(S,fluxes,mets,protectedMets,options)
 %   This program is intended for use in reducing the results of Flux
 %   Balance Analysis (FBA) simulations. For details of the algorithm,
 %   please refer to the associated publication:
-%   [INCLUDE TITLE]
-%   (Lugar, D., Mack, S., Sriram, G. Metabolic Engineering; doi: 10.1016/j.ymben.2020.11.003).
-%   [INCLUDE NOTE TO CITE THIS PAPER]
+%   
+%   Lugar, D., Mack, S., & Sriram, G. (2020). NetRed, an algorithm to reduce
+%   genome-scale metabolic networks and facilitate the analysis of flux
+%   predictions. Metabolic Engineering, doi: 10.1016/j.ymben.2020.11.003
+%
+%   If used, please cite the publication listed above.
 %
 % Inputs: NetRed(S,fluxes,mets,protectedMets,options)
 %   S - The stoichiometric matrix
